@@ -1,0 +1,25 @@
+#ticket-open-square {
+  width: auto;
+  padding: auto;
+  background: #838383;
+
+}
+
+#ticket-resolved-square {
+  width: auto;
+  height: auto;
+  background: #10921b;
+
+}
+
+#ticket-closed-square {
+  width: auto;
+  height: auto;
+  background: #b80f0f;
+
+}
+
+
+
+
+
