@@ -59,7 +59,7 @@
 
             $servername = 'localhost';
             $username = 'admin';
-            $password = 'admin';
+            $password = 'snir';
             $bdd = 'Ticketing';
             $table = 'tickets';
 
@@ -78,23 +78,71 @@ function ticketsDisplay(){
     $sql = "SELECT * FROM tickets";
     $result = dbquery($sql);
 
-    echo '<table border="1">';
-    echo '<tr><th>ID</th><th>Titre</th><th>Description</th></tr>';
+    echo '<div class="container">';
+    echo '<table class="table table-striped">';
+    echo '<thead>';
+    echo '<tr>';
+    echo '<th scope="col"> Nom </th>';
+    echo '<th scope="col"> Title </th>';
+    echo '<th scope="col"> Msg </th>';  
+    echo '<th scope="col"> <button type="button" class="btn text-nowrap btn-outline-dark">Priority ⇅</button> </th>';
+    echo '</tr>';  
+    echo '</thead>';
+    echo '<tbody>';
+
 
     while ($row = mysqli_fetch_assoc($result)) {
         echo '<tr>';
-        echo '<td>'.$row['id'].'</td>';
         echo '<td>'.$row['full_name'].'</td>';
         echo '<td>'.$row['title'].'</td>';
         echo '<td>'.$row['msg'].'</td>';
         echo '<td>'.$row['priority'].'</td>';
+        echo '<td> <button href="#" > Plus </button> </td> ';
         echo '</tr>';
     }
+    echo '</tbody>';
     echo '</table>';
+    echo '</div>';
 }
             ticketsDisplay();
 ?>            
 
     </body>
+
+    <script>
+        const tbody = document.querySelector('tbody');
+        const thx = document.querySelectorAll('th');
+        const trxb = tbody.querySelectorAll('tr');
+
+        thx.forEach(th => th.addEventListener('click', () =>{
+            let classe = Array.from(trxb).sort(compare(Array.from(thx).indexOf(th), this.asc = !this.asc));
+            classe.forEach(tr => tbody.appendChild(tr));
+        }));
+
+        const priorityWeights = {
+            "hight" : 1,
+            "medium" : 2 ,
+            "low" : 3 ,
+        }
+
+
+        const compare = (ids, asc) => (row1, row2) => {
+            const tdValue = (row, ids) => row.children[ids].textContent.trim().toLowerCase();
+            
+            const v1 = tdValue(asc ? row1 : row2, ids);
+            const v2 = tdValue(asc ? row2 : row1, ids);
+
+            // Si les valeurs sont dans notre dictionnaire de priorités, on compare les poids
+            if (priorityWeights[v1] && priorityWeights[v2]) {
+                return priorityWeights[v1] - priorityWeights[v2];
+            }
+
+            // Sinon, on garde votre logique actuelle (numérique ou alphabétique)
+            return v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) 
+                ? v1 - v2 
+                : v1.toString().localeCompare(v2);
+        };
+        </script>
+
 
 </html>
