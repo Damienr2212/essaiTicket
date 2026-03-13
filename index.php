@@ -75,7 +75,7 @@
             }
 
 function ticketsDisplay(){
-    $sql = "SELECT * FROM tickets";
+    $sql = "SELECT * FROM tickets Where ticket_status='open' or ticket_status='resolved'";
     $result = dbquery($sql);
 
     echo '<div class="container">';
@@ -97,7 +97,7 @@ function ticketsDisplay(){
         echo '<td>'.$row['title'].'</td>';
         echo '<td>'.$row['msg'].'</td>';
         echo '<td>'.$row['priority'].'</td>';
-        echo '<td> <button href="#" > Plus </button> </td> ';
+        echo "<td> <button  onclick='voirTicket(".$row['id'].")' > Plus </button></td> ";
         echo '</tr>';
     }
     echo '</tbody>';
@@ -105,6 +105,12 @@ function ticketsDisplay(){
     echo '</div>';
 }
             ticketsDisplay();
+
+    function TicketClosed(){        
+        $sql = "SELECT COUNT(*) FROM tickets WHERE ticket_status= 'closed'";
+        $result = dbquery($sql);
+        echo '<h1>'.$result.'</h1>'; 
+    }
 ?>            
 
     </body>
@@ -142,6 +148,12 @@ function ticketsDisplay(){
                 ? v1 - v2 
                 : v1.toString().localeCompare(v2);
         };
+
+
+
+        function voirTicket(id){
+            window.location.href = "detail.php/?id=" +id
+        }
         </script>
 
 
