@@ -59,7 +59,7 @@
 
             $servername = 'localhost';
             $username = 'admin';
-            $password = 'snir';
+            $password = 'admin';
             $bdd = 'Ticketing';
             $table = 'tickets';
 

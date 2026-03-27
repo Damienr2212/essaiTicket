@@ -10,6 +10,45 @@
     </head>
 
     <body>
+
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+$servername = 'localhost';
+$username = 'admin';
+$password = 'admin';
+$bdd = 'Ticketing';
+
+$db = mysqli_connect($servername, $username, $password, $bdd);
+if (!$db) die('Connexion échouée : ' . mysqli_connect_error());
+
+function tickCreate($db) {
+    $title = mysqli_real_escape_string($db, $_POST['title']);
+    $msg = mysqli_real_escape_string($db, $_POST['msg']);
+    $priority = mysqli_real_escape_string($db, $_POST['priority']);
+    $private = (int)$_POST['private'];
+    $category_id = (int)$_POST['category'];
+    
+    $sql = "INSERT INTO tickets (title, msg, priority, private, category_id, email) 
+            VALUES ('$title', '$msg', '$priority', $private, $category_id, NULL)";
+    
+    if (mysqli_query($db, $sql)) {
+        echo '<div class="alert alert-success mt-3">
+                ✅ Ticket créé ! ID : ' . mysqli_insert_id($db) . '
+              </div>';
+    } else {
+        echo '<div class="alert alert-danger mt-3">
+                ❌ Erreur : ' . mysqli_error($db) . '
+              </div>';
+    }
+}
+
+if (isset($_POST['envoyer']) && $_POST['envoyer'] == 'Créer') {
+    tickCreate($db);
+}
+?>
+
                 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
             <div class="container-fluid">
                 <h1 class="navbar-brand"> Ticketing Service </h1>
@@ -39,26 +78,26 @@
                             
                         <form method="post">
                             <label>Titre</label>
-                            <input class="form-control" type="text"  name="Nom" placeholder="Titre" required>
+                            <input class="form-control" type="text"  name="title" placeholder="Titre" required>
                             <div class="invalid-feedback">Valeur incorrecte</div>
 
                             <br>
 
                             <label>Categorie</label>
-                            <select class="form-control" name="Categorie" placeholder="Categorie" required>
+                            <select class="form-control" name="category" placeholder="Categorie" required>
                                 <option value="">Selectionner votre choix</option>
-                                <option value="Generale">Generale</option>
-                                <option value="TEST1">TEST1</option>
-                                <option value="TEST2">TEST2</option>
+                                <option value="1">Generale</option>
+                                <option value="2">Technique</option>
+                                <option value="3">Divers</option>
                             </select>   
                             <div class="invalid-feedback">Valeur incorrecte</div>
 
                             <br>
 
                             <label>Prioritée</label>
-                            <select class="form-control" name="Prioritée" placeholder="Prioritée" required>
+                            <select class="form-control" name="priority" placeholder="Prioritée" required>
                                 <option value="">Selectionner votre choix</option>
-                                <option value="Generale">High</option>
+                                <option value="High">High</option>
                                 <option value="Medium">Medium</option>
                                 <option value="Low">Low</option>
                             </select>   
@@ -67,21 +106,21 @@
                             <br>
 
                             <label>Privé</label>
-                            <select class="form-control" name="Privé" placeholder="Privé" required>
+                            <select class="form-control" name="private" placeholder="Privé" required>
                                 <option value="">Selectionner votre choix</option>
-                                <option value="Oui">Oui</option>
-                                <option value="Non">Non</option>
+                                <option value="1">Oui</option>
+                                <option value="0">Non</option>
                             </select>   
                             <div class="invalid-feedback">Valeur incorrecte</div>
 
                             <br>
                             
                             <div class="message-box">
-                            <label>Message</label>
-
-                            <div id="editor" contenteditable="true" class="editor">
-                                <span class="placeholder"></span>
+                                 <label>Message</label>
+                                <textarea name="msg" id="msg" class="form-control" rows="4" required></textarea>
                             </div>
+
+
 
                             <div class="toolbar">
                                 <button onclick="format('bold')"><b>B</b></button>
@@ -90,44 +129,16 @@
                             </div>
                             </div>
 
-                            <br>
-
-                            <input class="form-control" type="file" name="files" accept="image/png,image/jpeg"/>
+                            
 
                             <br>
 
-                            <input class="btn btn-primary" type="submit" value="Créer" />
+                            <input class="btn btn-primary" type="submit" name="envoyer" value="Créer" />
                         </form>
 
                     </div>
                 </div>
             </div>
 
-
-
-<script>
-function format(command) {
-  document.execCommand(command, false, null);
-}
-</script>
-
-
-            <!--
-
-
-
-        <?php
-		if (isset($_POST['prenom'])) {
-			$mysqli = new mysqli("localhost", "root", "", "essai");
-            $mysqli->set_charset("utf8");
-            $requete = "INSERT INTO carnet VALUES(NULL, '" . $_POST['civilite'] . "', '" . $_POST['prenom'] . "', '" . $_POST['nom'] . "', '" . $_POST['email'] . "', '" . $_POST['date_naissance'] . "')";
-		    $resultat = $mysqli->execute_query($requete);
-            if ($resultat)
-                echo "<p>Le contact a été ajouté</p>";
-            else
-                echo "<p>Erreur</p>";
-		}
-		?>  
-    -->
-
+        
     </body>

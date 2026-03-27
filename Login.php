@@ -32,13 +32,13 @@
         <?php 
         echo'
         <div class="container">
-
+Ticket
             <div class="row justify-content-around" style="width: auto">
                 <div class="col-sm-3">
                     
                     <h1>Créer un compte</h1>
 
-                    <form method="post">
+                    <form method="post" action="envoie_mail.php">
 
                         <label>Nom</label>
                         <input class="form-control" type="text"  name="full_name" placeholder="Jean Martin" required>
@@ -53,7 +53,7 @@
                         <div class="invalid-feedback">Valeur incorrecte></div>
                         
                         <br>
-                        <input class="btn btn-primary" type="submit" value="Ajouter" />
+                        <input class="btn btn-primary" id="button" type="submit" name="envoyer" value="Ajouter" />
 
                     </form>
                 </div>
@@ -89,10 +89,10 @@
             $servername = 'localhost';
             $username = 'admin';
             $password = 'admin';
-            $table = 'ticket';
+            $bdd = 'Ticketing';
             
 
-            $db = mysqli_connect($servername, $username, $password, $table);
+            $db = mysqli_connect($servername, $username, $password, $bdd);
 
            function dbquery(string $query){
             global $db;
@@ -103,11 +103,21 @@
              return $result;
             }
 
+            function accCreate(){
+            $salt = '$5$rounds=5000$' . bin2hex(random_bytes(8)) . '$';
             $full_name = $_POST['full_name'];
             $accpassword = $_POST['password'];
+            $hashpassword = crypt($accpassword, $salt);
             $email = $_POST['email'];
-            $sql = "INSERT INTO accounts (full_name, password, email) VALUES ('$full_name','$accpassword','$email')";
-            dbquery($sql)
-            
+            $sql = "INSERT INTO accounts (full_name, password, email) VALUES ('$full_name','$hashpassword','$email')";
+            dbquery($sql);
+            }
+
+            if(isset($_POST['envoyer']) && $_POST['envoyer'] == 'Ajouter') {
+            accCreate();
+            echo '<div class="alert alert-success">Compte créé !</div>';
+}
+
+
 ?>
 </body>
