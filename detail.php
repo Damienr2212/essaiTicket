@@ -31,7 +31,7 @@
 <?php 
     $servername = 'localhost';
     $username = 'admin';
-    $password = 'snir';
+    $password = 'admin';
     $bdd = 'Ticketing';
     $table = 'tickets';
 
@@ -51,6 +51,9 @@ function ticketsDisplay(){
     $id_ticket = htmlspecialchars($_GET["id"]);
     $sql = "SELECT * FROM tickets WHERE id=$id_ticket";
     $result = dbquery($sql);
+   
+
+    
 
     echo '<div class="container">';
     echo '<table class="table table-striped">';
@@ -82,13 +85,38 @@ function ticketsDisplay(){
 }
 ticketsDisplay();
 
+
+$sql = "SELECT * FROM tickets_comments WHERE ticket_id=$id_ticket";
+$result = dbquery($sql);
+    echo '<div class="container" id="comment" >';
+    echo '<table class="table table-striped">';
+    echo '<thead>';
+    echo '<tr>';
+    echo '<th scope="col"> Commentaire suplementaire </th>';  
+    echo '<th scope="col"> date du post </th>';  
+    echo '</tr>';  
+    echo '</thead>';
+    echo '<tbody>';
+    while ($row = mysqli_fetch_assoc($result)) {
+    echo '<td>'.$row['msg'].'</td>';
+    echo '<td>'.$row['created'].'</td>';
+}
+    echo '</tbody>';
+    echo '</table>';
+    echo '</div>';
+
 function ChangeStatusTicket(){
     $id_ticket = htmlspecialchars($_GET["id"]);
     $sql = "UPDATE tickets SET ticket_status='closed' WHERE id=$id_ticket";
     dbquery($sql);
-    header('Location: http://127.0.0.1/essaiTicket-main/');
+    retour_index();
     exit();
 
+}
+
+function retour_index(){
+    header('Location: http://127.0.0.1/index.php');
+    exit();
 }
 
 if (isset($_POST['Ticket_resolved'])) {
@@ -97,12 +125,13 @@ if (isset($_POST['Ticket_resolved'])) {
     }
 }
 
-$sql = "SELECT * FROM tickets_comments WHERE ticket_id=$id_ticket";
-$result = dbquery($sql);
-while ($row = mysqli_fetch_assoc($result)) {
-    echo $row['msg'];
-    echo $row['created'];
+if (isset($_POST['Retour_Racine'])){
+    if ($_POST['Retour_Racine']=="Accueil"){
+        retour_index();
+    }
 }
+
+
 
 ?>          
 
@@ -110,8 +139,10 @@ while ($row = mysqli_fetch_assoc($result)) {
 <form id="bouton" name="bouton" method="post" action="#">
   <label>
   <input type="submit" name="Ticket_resolved" id="bouton" value="Close_ticket" />
+  <input type="submit" name="Retour_Racine" value="Accueil" />
   </label>
 </form>
+
 
     
 </body>
