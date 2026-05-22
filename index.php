@@ -1,4 +1,7 @@
-<html lang="fr">
+<?php
+    session_start();
+
+echo '<html lang="fr">
 
     <head>
         <meta charset="utf-8">
@@ -12,29 +15,35 @@
     <body>
         <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
             <div class="container-fluid">
-                <h1 class="navbar-brand"> Ticketing Service </h1>
-                <ul class="navbar-nav">
-                    <li class="navbar-item">
-                        <a class="nav-link" href="Ticket.php"><i class="bi bi-plus"></i> Create Ticket</a>
-                    </li>
-                    <li class="navbar-item">
-                        <a class="nav-link" href="#"><i class="bi bi-list-ul"></i> Browse</a>
-                    </li>
-                    <li class="navbar-item">
-                        <a class="nav-link" href="Login.php"><i class="bi bi-lock"></i> Login</a>
-                    </li>
-                </ul>
+                <h1 class="navbar-brand"> Ticketing Service | Connecté en tant que : ' . (isset($_SESSION['nom']) ? $_SESSION['nom'] : '') . '</h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="navbar-item">
+                            <a class="nav-link" href="Ticket.php"><i class="bi bi-plus"></i> Create Ticket</a>
+                        </li>';
+                        if(empty($_SESSION['nom'])){
+                            echo '
+                        <li class="navbar-item">
+                            <a class="nav-link" href="Login.php"><i class="bi bi-lock"></i> Login</a>
+                        </li>';
+                        }
+echo'               </ul>
+                </div>
             </div>
         </nav>
-        <br>
+        <br>';
 
+        if(!empty($_SESSION['nom'])){
+            echo '
+        <a href="deconnexion.php">
+        <button> Se deconnecter</button>
+        </a>';
+        }
 
-
-        <div class="container-lg">
+        echo '<div class="container-lg">
             <h2>Home</h2>
             <hr>
             <div class="container ">
-
                 <div class="row align-items-center">
                     <div class="col" id="ticket-open-square">
                       <h1>Open Ticket</h1>
@@ -51,67 +60,82 @@
         <div class="container-lg">
             <hr>
             <h2>New Ticket</h2>
-        </div>
+        </div>';
 
+        $servername = 'localhost';
+        $username = 'admin';
+        $password = 'admin';
+        $bdd = 'Ticketing';
 
+        $conn = mysqli_connect($servername, $username, $password, $bdd);
 
-        <?php
+        function ticketsDisplay() {
+            global $conn;
 
-            $servername = 'localhost';
-            $username = 'admin';
-            $password = 'admin';
-            $bdd = 'Ticketing';
-            $table = 'tickets';
+            $user_role = $_SESSION['role'];
 
-            $db = mysqli_connect($servername, $username, $password, $bdd);
+            $query = "
+                SELECT tickets.id AS ticket_id, tickets.title, tickets.msg, tickets.priority,
+                       accounts.full_name
+                FROM tickets
+                JOIN accounts ON accounts.id = tickets.account_id
+            ";
 
-           function dbquery(string $query){
-            global $db;
-             $result = mysqli_query($db, $query);
-            if (!$result) {
-             echo 'query pas ok';
+            if ($user_role === 'Admin') {
+                $sql = mysqli_prepare($conn, $query . "
+                    WHERE tickets.ticket_status = 'open'
+                    OR tickets.ticket_status = 'resolved'
+                    OR tickets.ticket_status = 'closed'
+                ");
+                mysqli_stmt_execute($sql);
+
+            } elseif ($user_role === 'Technicien') {
+                $sql = mysqli_prepare($conn, $query . "
+                    WHERE tickets.ticket_status = 'open'
+                ");
+                mysqli_stmt_execute($sql);
+
+            } elseif ($user_role === 'Member') {
+                $id_user = $_SESSION['id'];
+                $sql = mysqli_prepare($conn, $query . "
+                    WHERE tickets.ticket_status = 'open'
+                    AND accounts.id = ?
+                ");
+                mysqli_stmt_bind_param($sql, 'i', $id_user);
+                mysqli_stmt_execute($sql);
             }
-             return $result;
+
+            $result = mysqli_stmt_get_result($sql);
+
+            echo '<div class="container">';
+            echo '<table class="table table-striped">';
+            echo '<thead>';
+            echo '<tr>';
+            echo '<th scope="col"> Nom </th>';
+            echo '<th scope="col"> Title </th>';
+            echo '<th scope="col"> Msg </th>';
+            echo '<th scope="col"><button type="button" class="btn text-nowrap btn-outline-dark">Priority ⇅</button></th>';
+            echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+
+            while ($row = mysqli_fetch_assoc($result)) {
+                echo '<tr>';
+                echo '<td>' . htmlspecialchars($row['full_name']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['title']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['msg']) . '</td>';
+                echo '<td>' . htmlspecialchars($row['priority']) . '</td>';
+                echo "<td><button onclick='voirTicket(" . $row['ticket_id'] . ")'>Plus</button></td>";
+                echo '</tr>';
             }
 
-function ticketsDisplay(){
-    $sql = "SELECT * FROM tickets Where ticket_status='open' or ticket_status='resolved'";
-    $result = dbquery($sql);
+            echo '</tbody>';
+            echo '</table>';
+            echo '</div>';
+        }
 
-    echo '<div class="container">';
-    echo '<table class="table table-striped">';
-    echo '<thead>';
-    echo '<tr>';
-    echo '<th scope="col"> Nom </th>';
-    echo '<th scope="col"> Title </th>';
-    echo '<th scope="col"> Msg </th>';  
-    echo '<th scope="col"> <button type="button" class="btn text-nowrap btn-outline-dark">Priority ⇅</button> </th>';
-    echo '</tr>';  
-    echo '</thead>';
-    echo '<tbody>';
-
-
-    while ($row = mysqli_fetch_assoc($result)) {
-        echo '<tr>';
-        echo '<td>'.$row['full_name'].'</td>';
-        echo '<td>'.$row['title'].'</td>';
-        echo '<td>'.$row['msg'].'</td>';
-        echo '<td>'.$row['priority'].'</td>';
-        echo "<td> <button  onclick='voirTicket(".$row['id'].")' > Plus </button></td> ";
-        echo '</tr>';
-    }
-    echo '</tbody>';
-    echo '</table>';
-    echo '</div>';
-}
-            ticketsDisplay();
-
-    function TicketClosed(){        
-        $sql = "SELECT COUNT(*) FROM tickets WHERE ticket_status= 'closed'";
-        $result = dbquery($sql);
-        echo '<h1>'.$result.'</h1>'; 
-    }
-?>            
+        ticketsDisplay();
+?>
 
     </body>
 
@@ -127,10 +151,9 @@ function ticketsDisplay(){
 
         const priorityWeights = {
             "hight" : 1,
-            "medium" : 2 ,
-            "low" : 3 ,
+            "medium" : 2,
+            "low" : 3,
         }
-
 
         const compare = (ids, asc) => (row1, row2) => {
             const tdValue = (row, ids) => row.children[ids].textContent.trim().toLowerCase();
@@ -138,23 +161,18 @@ function ticketsDisplay(){
             const v1 = tdValue(asc ? row1 : row2, ids);
             const v2 = tdValue(asc ? row2 : row1, ids);
 
-            // Si les valeurs sont dans notre dictionnaire de priorités, on compare les poids
             if (priorityWeights[v1] && priorityWeights[v2]) {
                 return priorityWeights[v1] - priorityWeights[v2];
             }
 
-            // Sinon, on garde votre logique actuelle (numérique ou alphabétique)
             return v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) 
                 ? v1 - v2 
                 : v1.toString().localeCompare(v2);
         };
 
-
-
         function voirTicket(id){
-            window.location.href = "detail.php/?id=" +id
+            window.location.href = "detail.php/?id=" + id;
         }
-        </script>
-
+    </script>
 
 </html>

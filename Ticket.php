@@ -12,6 +12,7 @@
     <body>
 
 <?php
+    session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -29,40 +30,48 @@ function tickCreate($db) {
     $priority = mysqli_real_escape_string($db, $_POST['priority']);
     $private = (int)$_POST['private'];
     $category_id = (int)$_POST['category'];
-    
-    $sql = "INSERT INTO tickets (title, msg, priority, private, category_id, email) 
-            VALUES ('$title', '$msg', '$priority', $private, $category_id, NULL)";
+    $user_id = $_SESSION['id'];
+    $user_full_name = $_SESSION['nom'];
+    var_dump($user_full_name);
+    $sql = "INSERT INTO tickets (title, msg, full_name, priority, private, category_id,account_id) 
+            VALUES ('$title', '$msg','$user_full_name', '$priority', $private, $category_id, $user_id)";
+    var_dump($sql);
     
     if (mysqli_query($db, $sql)) {
         echo '<div class="alert alert-success mt-3">
-                ✅ Ticket créé ! ID : ' . mysqli_insert_id($db) . '
+             Ticket créé ID : ' . mysqli_insert_id($db) . '
               </div>';
     } else {
         echo '<div class="alert alert-danger mt-3">
-                ❌ Erreur : ' . mysqli_error($db) . '
+                Erreur : ' . mysqli_error($db) . '
               </div>';
     }
 }
 
 if (isset($_POST['envoyer']) && $_POST['envoyer'] == 'Créer') {
-    tickCreate($db);
+    if(!empty($_SESSION['nom'])){
+        tickCreate($db);
+    }else{
+        header('Location:Login.php');
+    }
 }
-?>
 
-                <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+echo'  <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
             <div class="container-fluid">
-                <h1 class="navbar-brand"> Ticketing Service </h1>
-                <ul class="navbar-nav">
-                    <li class="navbar-item">
-                        <a class="nav-link" href="index.php"><i class="bi bi-house"></i> Home</a>
-                    </li>
-                    <li class="navbar-item">
-                        <a class="nav-link" href="#"><i class="bi bi-list-ul"></i> Browse</a>
-                    </li>
-                    <li class="navbar-item">
-                        <a class="nav-link" href="Login.php"><i class="bi bi-lock"></i> Login</a>
-                    </li>
-                </ul>
+                <h1 class="navbar-brand"> Ticketing Service | Connecté en tant que : ' . (isset($_SESSION['nom']) ? $_SESSION['nom'] : '') . '</h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="navbar-item">
+                            <a class="nav-link" href="index.php"><i class="bi bi-house"></i> Accueil</a>
+                        </li';
+                        if(empty($_SESSION['nom'])){
+                            echo '
+                        <li class="navbar-item">
+                            <a class="nav-link" href="Login.php"><i class="bi bi-lock"></i> Login</a>
+                        </li>';
+                        }
+                echo '</ul>
+                </div>
             </div>
         </nav>
         
@@ -118,7 +127,8 @@ if (isset($_POST['envoyer']) && $_POST['envoyer'] == 'Créer') {
                             <div class="message-box">
                                  <label>Message</label>
                                 <textarea name="msg" id="msg" class="form-control" rows="4" required></textarea>
-                            </div>
+                            </div>';
+    ?>
 
 
 
@@ -142,3 +152,4 @@ if (isset($_POST['envoyer']) && $_POST['envoyer'] == 'Créer') {
 
         
     </body>
+

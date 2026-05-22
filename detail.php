@@ -1,3 +1,6 @@
+<?php 
+    session_start();
+    echo '
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -8,27 +11,24 @@
     <title>Detail Ticket</title>
 </head>
 <body>
-    <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-        <div class="container-fluid">
-            <h1 class="navbar-brand"> Ticketing Service </h1>
-                <ul class="navbar-nav">
-                <li class="navbar-item">
-                    <a class="nav-link" href="index.php"><i class="bi bi-house"></i> Home</a>
-                </li>
-                <li class="navbar-item">
-                    <a class="nav-link" href="#"><i class="bi bi-list-ul"></i> Browse</a>
-                </li>
-                <li class="navbar-item">
-                    <a class="nav-link" href="Login.php"><i class="bi bi-lock"></i> Login</a>
-                </li>
-                </ul>
-        </div>
-    </nav>
-    <br>
+        <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+            <div class="container-fluid">
+                <h1 class="navbar-brand"> Ticketing Service | Connecté en tant que : ' . (isset($_SESSION['nom']) ? $_SESSION['nom'] : '') . '</h1>
+                <div class="collapse navbar-collapse">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="navbar-item">
+                            <a class="nav-link" href="Ticket.php"><i class="bi bi-plus"></i> Create Ticket</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    <br>';
 
 
 
-<?php 
+
+
     $servername = 'localhost';
     $username = 'admin';
     $password = 'admin';
@@ -46,29 +46,30 @@
      }
 
 $id_ticket = htmlspecialchars($_GET["id"]);
+var_dump($id_ticket);
 
 function ticketsDisplay(){
     $id_ticket = htmlspecialchars($_GET["id"]);
     $sql = "SELECT * FROM tickets WHERE id=$id_ticket";
     $result = dbquery($sql);
-   
-
+    $row = mysqli_fetch_assoc($result);
     
 
-    echo '<div class="container">';
-    echo '<table class="table table-striped">';
-    echo '<thead>';
-    echo '<tr>';
-    echo '<th scope="col"> Nom </th>';
-    echo '<th scope="col"> Title </th>';
-    echo '<th scope="col"> Msg </th>';  
-    echo '<th scope="col">Priority</th>';
-    echo '</tr>';  
-    echo '</thead>';
-    echo '<tbody>';
+    echo '<div class="container">
+    <table class="table table-striped">
+    <thead>
+    <tr>
+    <th scope="col"> Nom </th>
+    <th scope="col"> Title </th>
+    <th scope="col"> Msg </th>
+    <th scope="col">Priority</th>
+    <th scope="col">Date</th>
+    <th scope="col">Statut</th>
+    <th scope="col">Mail</th>
 
-
-    $row = mysqli_fetch_assoc($result);
+    </tr>
+    </thead>
+    <tbody>';
         echo '<tr>';
         echo '<td>'.$row['full_name'].'</td>';
         echo '<td>'.$row['title'].'</td>';
