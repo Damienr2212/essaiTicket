@@ -17,9 +17,9 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 $servername = 'localhost';
-$username = 'admin';
-$password = 'admin';
-$bdd = 'Ticketing';
+$username = 'root';
+$password = 'M@rseille13012*';
+$bdd = 'ticketing';
 
 $db = mysqli_connect($servername, $username, $password, $bdd);
 if (!$db) die('Connexion échouée : ' . mysqli_connect_error());
@@ -32,10 +32,11 @@ function tickCreate($db) {
     $category_id = (int)$_POST['category'];
     $user_id = $_SESSION['id'];
     $user_full_name = $_SESSION['nom'];
+    $user_mail = $_SESSION['mail'];
     var_dump($user_full_name);
-    $sql = "INSERT INTO tickets (title, msg, full_name, priority, private, category_id,account_id) 
-            VALUES ('$title', '$msg','$user_full_name', '$priority', $private, $category_id, $user_id)";
-    var_dump($sql);
+    $sql = "INSERT INTO tickets (title, msg, full_name, email, priority, private, category_id,account_id) 
+            VALUES ('$title', '$msg','$user_full_name', '$user_mail', '$priority', $private, $category_id, $user_id)";
+    /*var_dump($sql);*/
     
     if (mysqli_query($db, $sql)) {
         echo '<div class="alert alert-success mt-3">
