@@ -107,17 +107,17 @@ echo'               </ul>
 
             $result = mysqli_stmt_get_result($sql);
 
-            echo '<div class="container">';
-            echo '<table class="table table-striped">';
-            echo '<thead>';
-            echo '<tr>';
-            echo '<th scope="col"> Nom </th>';
-            echo '<th scope="col"> Title </th>';
-            echo '<th scope="col"> Msg </th>';
-            echo '<th scope="col"><button type="button" class="btn text-nowrap btn-outline-dark">Priority ⇅</button></th>';
-            echo '</tr>';
-            echo '</thead>';
-            echo '<tbody>';
+            echo '<div class="container">
+                <table class="table table-striped">
+                <thead>
+                <tr>
+                <th scope="col"> Nom </th>
+                <th scope="col"> Title </th>
+                <th scope="col"> Msg </th>
+                <th scope="col"><button type="button" class="btn text-nowrap btn-outline-dark">Priority ⇅</button></th>
+                </tr>
+                </thead>
+                <tbody>';
 
             while ($row = mysqli_fetch_assoc($result)) {
                 echo '<tr>';

@@ -46,7 +46,7 @@ session_start();
 
                 if($recupUser->rowCount() > 0) {
                     $user = $recupUser->fetch();
-                    var_dump($user);
+                    /*var_dump($user);*/
                     if(crypt($pswd, $user['password']) == $user['password']) {
                         $_SESSION['mail'] = $mail;
                         $_SESSION['nom'] = $user['full_name'];

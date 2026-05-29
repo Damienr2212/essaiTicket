@@ -15,7 +15,7 @@
             <div class="container-fluid">
                 <h1 class="navbar-brand"> Ticketing Service | Connecté en tant que : ' . (isset($_SESSION['nom']) ? $_SESSION['nom'] : '') . '</h1>
                 <div class="collapse navbar-collapse">
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav ms-auto">S
                         <li class="navbar-item">
                             <a class="nav-link" href="Ticket.php"><i class="bi bi-plus"></i> Create Ticket</a>
                         </li>
