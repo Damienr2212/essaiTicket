@@ -30,10 +30,10 @@
 
 
     $servername = 'localhost';
-    $username = 'admin';
-    $password = 'admin';
-    $bdd = 'Ticketing';
-    $table = 'tickets';
+    $username = 'root';
+    $password = 'M@rseille13012*';
+    $bdd = 'ticketing';
+    
 
      $db = mysqli_connect($servername, $username, $password, $bdd);
     function dbquery(string $query){
@@ -46,7 +46,7 @@
      }
 
 $id_ticket = htmlspecialchars($_GET["id"]);
-var_dump($id_ticket);
+/*var_dump($id_ticket);*/
 
 function ticketsDisplay(){
     $id_ticket = htmlspecialchars($_GET["id"]);
@@ -116,8 +116,8 @@ function ChangeStatusTicket(){
 }
 
 function retour_index(){
-    header('Location: http://127.0.0.1/index.php');
-    exit();
+    header('Location: /index.php');
+	exit();
 }
 
 if (isset($_POST['Ticket_resolved'])) {
@@ -136,12 +136,16 @@ if (isset($_POST['Retour_Racine'])){
 
 ?>          
 
+<!-- Formulaire 1 : Fermer le ticket -->
+<form method="post" action="#">
+    <input type="submit" name="Ticket_resolved" value="Close_ticket" />
+</form>
 
-<form id="bouton" name="bouton" method="post" action="#">
-  <label>
-  <input type="submit" name="Ticket_resolved" id="bouton" value="Close_ticket" />
-  <input type="submit" name="Retour_Racine" value="Accueil" />
-  </label>
+<br>
+
+<!-- Formulaire 2 : Retour accueil -->
+<form method="post" action="#">
+    <input type="submit" name="Retour_Racine" value="Accueil" />
 </form>
 
 

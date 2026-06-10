@@ -63,14 +63,22 @@ echo'               </ul>
         </div>';
 
         $servername = 'localhost';
-        $username = 'admin';
-        $password = 'admin';
-        $bdd = 'Ticketing';
+        $username = 'root';
+        $password = 'M@rseille13012*';
+        $bdd = 'ticketing';
 
         $conn = mysqli_connect($servername, $username, $password, $bdd);
 
         function ticketsDisplay() {
             global $conn;
+
+            /*var_dump($_SESSION);*/
+            if(empty($_SESSION)){
+                
+                echo '  <br>
+                        <h1> CONNECTER VOUS POUR VOIR VOS TICKETS </h1> 
+                 ';
+            }else{
 
             $user_role = $_SESSION['role'];
 
@@ -132,6 +140,7 @@ echo'               </ul>
             echo '</tbody>';
             echo '</table>';
             echo '</div>';
+        }
         }
 
         ticketsDisplay();

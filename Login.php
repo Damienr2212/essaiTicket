@@ -1,9 +1,9 @@
 <?php
 session_start();
         $servername = 'localhost';
-        $username = 'admin';
-        $password = 'admin';
-        $dbname = 'Ticketing';
+        $username = 'root';
+        $password = 'M@rseille13012*';
+        $dbname = 'ticketing';
 
         $db = mysqli_connect($servername, $username, $password, $dbname);
 
@@ -33,7 +33,7 @@ session_start();
             echo '<div class="alert alert-success">Compte créé !</div>';
         }
 
-        $bdd = new PDO('mysql:host=localhost;dbname=Ticketing;charset=utf8;', 'admin', 'admin');
+        $bdd = new PDO('mysql:host=localhost;dbname=ticketing;charset=utf8;', 'root', 'M@rseille13012*');
 
         if(isset($_POST['connecter'])) {
             if(!empty($_POST['pswd']) && !empty($_POST['mail'])) {
